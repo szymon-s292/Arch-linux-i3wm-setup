@@ -1,0 +1,287 @@
+;==========================================================
+;
+;
+;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
+;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
+;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
+;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
+;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+;
+;
+;   To learn more about how to configure Polybar
+;   go to https://github.com/polybar/polybar
+;
+;   The README contains a lot of information
+;
+;==========================================================
+
+[colors]
+background = #0c0c0e
+foreground = #b0b5b2
+primary = #b0b5b2
+; background = #282A2E
+; background-alt = #373B41
+; foreground = #b0b5b2
+; primary = #b0b5b2
+; secondary = #8ABEB7
+; alert = #A54242
+; disabled = #707880
+
+[bar/primary]
+width = 100%
+height = 24pt
+radius = 0 
+
+; dpi = 96
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3pt
+
+border-size = 0pt
+border-color = #00000000
+
+padding-left = 0
+padding-right = 1
+
+module-margin = 1
+
+separator = |
+separator-foreground = ${colors.disabled}
+
+font-0 = Hack Nerd Font:style=regular:size=10;2
+
+modules-left = date battery cpu fan memory filesystem
+modules-center = xworkspaces
+modules-right = backlight pulseaudio bluetooth wlan eth powermenu
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+enable-ipc = true
+
+; wm-restack = generic
+; wm-restack = bspwm
+; wm-restack = i3
+
+; override-redirect = true
+
+[module/systray]
+type = internal/tray
+
+format-margin = 8pt
+tray-spacing = 16pt
+
+[module/xworkspaces]
+pin-workspaces = true
+type = internal/xworkspaces
+
+label-active = %name%
+label-active-background = ${colors.background-alt}
+label-active-underline= ${colors.primary}
+label-active-padding = 1
+
+label-occupied = %name%
+label-occupied-padding = 1
+
+label-urgent = %name%
+label-urgent-background = ${colors.alert}
+label-urgent-padding = 1
+
+label-empty = %name%
+label-empty-foreground = ${colors.disabled}
+label-empty-padding = 1
+
+#[module/xwindow]
+#type = internal/xwindow
+#label = %title:0:60:...%
+
+[module/fan]
+type = custom/script
+exec = $HOME/.config/polybar/fan_rpm.sh
+interval = 1
+label = "  %output%"
+
+[module/filesystem]
+type = internal/fs
+interval = 25
+
+mount-0 = /
+
+label-mounted = %{F#b0b5b2}%mountpoint%%{F-} %percentage_used%%
+
+label-unmounted = %mountpoint% not mounted
+label-unmounted-foreground = ${colors.disabled}
+
+[module/backlight]
+type = internal/backlight
+
+card = intel_backlight
+enable-scroll = true
+
+format = <ramp> <label>
+label = %{F#b0b5b2}%percentage%
+ramp-5 = %{F#b0b5b2}󰃠%{F-}
+ramp-4 = %{F#b0b5b2}󰃠%{F-}
+ramp-3 = %{F#b0b5b2}󰃟%{F-}
+ramp-2 = %{F#b0b5b2}󰃟%{F-}
+ramp-1 = %{F#b0b5b2}󰃞%{F-}
+ramp-0 = %{F#b0b5b2}󰃞%{F-}
+
+[module/battery]
+type = internal/battery
+
+full-at = 97
+
+low-at = 5
+battery = BAT1
+adapter = ADP1
+poll-interval = 2
+
+label-charging = %percentage%% 
+label-discharging = %percentage%%
+
+format-charging = <animation-charging>  <label-charging>
+format-discharging = <ramp-capacity>  <label-discharging>
+format-full = <ramp-capacity>  <label-full>
+
+animation-charging-0 = %{F#b0b5b2}%{F-}
+animation-charging-1 = %{F#b0b5b2}%{F-}
+animation-charging-2 = %{F#b0b5b2}%{F-}
+animation-charging-3 = %{F#b0b5b2}%{F-}
+animation-charging-4 = %{F#b0b5b2}%{F-}
+animation-charging-framerate = 750
+
+ramp-capacity-0 = %{F#b0b5b2}%{F-}
+ramp-capacity-1 = %{F#b0b5b2}%{F-}
+ramp-capacity-2 = %{F#b0b5b2}%{F-}
+ramp-capacity-3 = %{F#b0b5b2}%{F-}
+ramp-capacity-4 = %{F#b0b5b2}%{F-}
+
+#label-full = "%{F#b0b5b2}%{F-}  %percentage%%"
+
+[module/battery_temp]
+type = custom/script
+exec = acpi -V | grep 'Thermal 0' | head -n 1 | awk '{print $4}'
+interval = 5
+label = "%{F#b0b5b2} %{F#b0b5b2}%output%"
+
+[module/pulseaudio]
+type = internal/pulseaudio
+format-volume-prefix = " "
+format-volume-prefix-foreground = ${colors.primary}
+format-volume = <label-volume>
+label-volume = %percentage%%
+
+label-muted = " "
+label-muted-foreground = ${colors.disabled}
+click-right = pavucontrol
+
+#[module/xkeyboard]
+#type = internal/xkeyboard
+#blacklist-0 = num lock
+
+#label-layout = %layout%
+#label-layout-foreground = ${colors.primary}
+
+#label-indicator-padding = 2
+#label-indicator-margin = 1
+#label-indicator-foreground = ${colors.background}
+#label-indicator-background = ${colors.secondary}
+
+[module/memory]
+type = internal/memory
+interval = 2
+format-prefix = "  "
+format-prefix-foreground = ${colors.primary}
+label = %percentage_used:2%%
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+format-prefix = " "
+format-prefix-foreground = ${colors.primary}
+label = %percentage:2%%
+
+[module/cpu_temp_0]
+type = custom/script
+exec = sensors | grep 'Core 0' | awk '{print substr($3, 2)}'
+interval = 1
+label = "%{F#b0b5b2} %{F#b0b5b2}%output%"
+
+[module/bluetooth]
+type = custom/script
+exec = echo ""
+interval = 1
+label = "%{F#b0b5b2}%output%"
+click-right = blueman-manager
+
+[network-base]
+type = internal/network
+interval = 5
+format-connected = <label-connected>
+format-disconnected = <label-disconnected>
+label-disconnected = %{F#b0b5b2}%ifname%%{F#707880} disconnected
+click-right = pavucontrol
+
+[module/wlan]
+inherit = network-base
+interface-type = wireless
+label-connected = "%{F#b0b5b2}󰖩  %{F#b0b5b2}%local_ip%"
+label-disconnected = "%{F#707887}󰖪"
+
+[module/eth]
+inherit = network-base
+interface-type = wired
+label-connected = "%{F#b0b5b2}󰌘 %{F#b0b5b2}%local_ip%"
+label-disconnected = "%{F#707887}󰌙"
+
+[module/date]
+type = internal/date
+interval = 1
+
+date = %H:%M
+date-alt = %Y-%m-%d %H:%M:%S
+
+label = " %date%"
+label-foreground = ${colors.primary}
+
+[settings]
+screenchange-reload = true
+pseudo-transparency = true
+
+[module/powermenu]
+type = custom/menu
+
+label-open = "%{F#b0b5b2}"  
+;label-open-background = #dd0000
+;label-open-foreground = #b0b5b2
+label-close = cancel
+;label-close-background = #dd0000
+;label-close-foreground = #b0b5b2
+label-open-padding = 1 
+label-close-padding = 1 
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+menu-0-2 = sleep
+menu-0-2-exec = menu-open-3
+menu-0-0-padding = 2
+menu-0-1-padding = 2
+menu-0-2-padding = 2
+
+menu-1-0 = reboot?  
+menu-1-0-exec = reboot
+menu-1-0-padding = 3
+
+menu-2-0 = power off?  
+menu-2-0-exec = shutdown now
+menu-2-0-padding = 3
+
+menu-3-0 = sleep?  
+menu-3-0-exec = dm-tool lock && systemctl suspend
+menu-3-0-padding = 3
