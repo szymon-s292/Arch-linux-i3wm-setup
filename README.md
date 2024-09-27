@@ -1,7 +1,7 @@
 [![My Skills](https://skillicons.dev/icons?i=arch,)](https://skillicons.dev) 
 # i3wm dark productivity setup
 
-Minimize distractions
+Minimize distractions \
 Maximize productivity
 
 Config files for 
